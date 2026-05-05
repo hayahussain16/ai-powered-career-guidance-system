@@ -1,0 +1,54 @@
+CareerAI Training Report
+============================================================
+
+Samples per career : 400
+Total samples      : 10000
+Careers            : 25
+
+Imbalance strategies applied:
+  A) Balanced synthetic data generation (equal classes)
+  B) RandomForest class_weight='balanced'
+  C) GradientBoosting sample_weight (balanced)
+  D) SMOTE (if imbalanced-learn installed)
+  E) Platt probability calibration
+  F) Soft-voting ensemble (60% GB + 40% RF)
+
+Balanced Accuracy (test set):
+  GradientBoosting : 0.9567
+  RandomForest     : 0.9487
+  Ensemble         : 0.9553
+
+CV 5-fold: 0.9552 ± 0.0045
+
+Per-class Classification Report:
+                        precision    recall  f1-score   support
+
+         AI Researcher       0.98      1.00      0.99        60
+     Backend Developer       1.00      0.88      0.94        60
+  Blockchain Developer       1.00      1.00      1.00        60
+      Business Analyst       0.95      0.87      0.90        60
+        Civil Engineer       0.86      0.98      0.91        60
+        Cloud Engineer       0.92      0.75      0.83        60
+    Content Strategist       1.00      1.00      1.00        60
+ Cybersecurity Analyst       1.00      1.00      1.00        60
+        Data Scientist       1.00      0.97      0.98        60
+Database Administrator       1.00      1.00      1.00        60
+       DevOps Engineer       0.71      0.93      0.81        60
+      Digital Marketer       1.00      1.00      1.00        60
+                Doctor       1.00      1.00      1.00        60
+       Finance Analyst       0.88      0.97      0.92        60
+    Frontend Developer       0.94      0.83      0.88        60
+        Game Developer       0.86      0.98      0.91        60
+         HR Specialist       1.00      1.00      1.00        60
+                Lawyer       1.00      1.00      1.00        60
+           ML Engineer       0.97      0.97      0.97        60
+   Mechanical Engineer       0.98      0.83      0.90        60
+  Mobile App Developer       1.00      1.00      1.00        60
+      Network Engineer       1.00      1.00      1.00        60
+       Product Manager       1.00      0.98      0.99        60
+    Software Developer       1.00      1.00      1.00        60
+        UI/UX Designer       0.97      0.93      0.95        60
+
+              accuracy                           0.96      1500
+             macro avg       0.96      0.96      0.96      1500
+          weighted avg       0.96      0.96      0.96      1500
