@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="auth-page">
+    <div class="auth-wrap">
+
+        <div class="shimmer-bar"></div>
+        <span class="eyebrow">◈ AI-Powered Career Intelligence</span>
+        <h1 class="heading">Create<br>Account</h1>
+        <p class="subtext">Get AI-matched career paths tailored to your stream, interests &amp; academics</p>
+
+        <div class="card">
+
+            <div class="form-row">
+                <div>
+                    <label class="label" for="inp-name">Full Name</label>
+                    <input class="input" id="inp-name" type="text"
+                           placeholder="Your name" autocomplete="name">
+                </div>
+                <div>
+                    <label class="label" for="inp-email">Email</label>
+                    <input class="input" id="inp-email" type="email"
+                           placeholder="you@example.com" autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label" for="inp-pass">Password</label>
+                <div class="pw-wrap">
+                    <input class="input" id="inp-pass" type="password"
+                           placeholder="Min. 6 characters" autocomplete="new-password">
+                    <button type="button" class="pw-eye" id="eyeBtn">○</button>
+                </div>
+            </div>
+
+            <div id="errMsg" class="err-msg"></div>
+
+            <button class="submit-btn" onclick="doRegister()">
+                Create Account →
+            </button>
+        </div>
+
+        <p class="footer-note">
+            Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+
+    </div>
+</div>
+
+<style>
+.auth-page {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 64px); padding: 2rem;
+    position: relative; z-index: 1;
+}
+.auth-wrap {
+    width: 100%; max-width: 480px;
+    animation: fadeUp 0.45s ease both;
+}
+@keyframes fadeUp {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.shimmer-bar {
+    height: 3px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+    background-size: 200%;
+    animation: shimmer 3s linear infinite;
+    margin-bottom: 2.5rem;
+}
+@keyframes shimmer { from{background-position:0%} to{background-position:200%} }
+.eyebrow {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 0.75rem;
+}
+.heading {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3rem; font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 0.5rem; color: var(--fg);
+}
+[data-theme="dark"] .heading {
+    background: linear-gradient(135deg, #e8eeff 40%, var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.subtext {
+    color: var(--fg-muted); font-size: 0.95rem;
+    margin-bottom: 2rem; line-height: 1.5;
+}
+.card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 22px; padding: 2.25rem;
+    position: relative; overflow: hidden;
+}
+[data-theme="dark"] .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+.form-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-bottom: 1.1rem;
+}
+.form-group { margin-bottom: 1.1rem; }
+.label {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.74rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--fg2); margin-bottom: 0.42rem;
+}
+.input {
+    width: 100%; padding: 0.75rem 1rem;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--fg);
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 0.92rem;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px var(--cyan-glow);
+}
+.input::placeholder { color: var(--fg-muted); }
+.pw-wrap { position: relative; display: flex; align-items: center; }
+.pw-wrap .input { padding-right: 3rem; }
+.pw-eye {
+    position: absolute; right: 0.9rem;
+    background: none; border: none;
+    color: var(--fg-muted); cursor: pointer;
+    font-size: 1.05rem; padding: 0; transition: color 0.2s;
+}
+.pw-eye:hover { color: var(--cyan); }
+.err-msg {
+    background: var(--red-bg); color: var(--red);
+    border: 1px solid var(--red); border-radius: 8px;
+    padding: 0.7rem 1rem; font-size: 0.875rem;
+    margin-bottom: 0.9rem; display: none;
+}
+.submit-btn {
+    width: 100%; padding: 0.9rem;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #fff; border: none; border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
+}
+.submit-btn:hover  { opacity: 0.9; transform: translateY(-1px); }
+.submit-btn:active { transform: translateY(0); }
+[data-theme="dark"] .submit-btn {
+    box-shadow: 0 4px 22px rgba(0,212,255,0.28);
+}
+.footer-note {
+    text-align: center; margin-top: 1.25rem;
+    font-size: 0.9rem; color: var(--fg-muted);
+}
+.footer-note a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+.footer-note a:hover { text-decoration: underline; }
+@media (max-width: 500px) {
+    .form-row { grid-template-columns: 1fr; }
+    .heading  { font-size: 2.4rem; }
+    .card     { padding: 1.5rem; }
+}
+</style>
+
+<script>
+document.getElementById('eyeBtn').addEventListener('click', function () {
+    const inp  = document.getElementById('inp-pass');
+    const show = inp.type === 'password';
+    inp.type         = show ? 'text' : 'password';
+    this.textContent = show ? '●' : '○';
+});
+
+function doRegister() {
+    const name  = document.getElementById('inp-name').value.trim();
+    const email = document.getElementById('inp-email').value.trim();
+    const pass  = document.getElementById('inp-pass').value;
+    const err   = document.getElementById('errMsg');
+
+    if (!name || !email || !pass) {
+        err.textContent   = '⚠ Please fill in all fields.';
+        err.style.display = 'block'; return;
+    }
+    if (pass.length < 6) {
+        err.textContent   = '⚠ Password must be at least 6 characters.';
+        err.style.display = 'block'; return;
+    }
+    err.style.display = 'none';
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("register") }}';
+
+    [['name', name], ['email', email], ['password', pass]].forEach(([k, v]) => {
+        const h = document.createElement('input');
+        h.type = 'hidden'; h.name = k; h.value = v;
+        form.appendChild(h);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doRegister();
+});
+</script>
+
+{% endblock %}

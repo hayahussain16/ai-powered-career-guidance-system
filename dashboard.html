@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="dashboard-layout">
+
+    <!-- ===== PROFILE SIDEBAR ===== -->
+    <aside class="profile-sidebar">
+        <div class="sidebar-card">
+            <div class="sidebar-header">
+                <div class="sidebar-header-icon">◈</div>
+                <h2>Profile Matrix</h2>
+                <p>Update to recalibrate AI</p>
+            </div>
+
+            <div class="sidebar-body">
+                <form method="POST" action="/dashboard" class="profile-form">
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.9rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Name</label>
+                            <input class="form-input" name="name" placeholder="Your name" value="{{ user.name or '' }}">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Age</label>
+                            <input class="form-input" name="age" type="number" placeholder="18" value="{{ user.age or '' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Stream</label>
+                        <select class="form-select" name="stream">
+                            <option value="">Select stream</option>
+                            {% for s in ['Science', 'Commerce', 'Arts', 'Engineering'] %}
+                            <option value="{{ s }}" {% if user.stream == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Degree</label>
+                        <select class="form-select" name="degree">
+                            <option value="">Select degree</option>
+                            {% for d in [('btech','B.Tech'), ('bsc','B.Sc'), ('bcom','B.Com'), ('bca','BCA'), ('ba','BA'), ('bba','BBA'), ('mtech','M.Tech'), ('mba','MBA'), ('mbbs','MBBS'), ('llb','LLB'), ('phd','PhD')] %}
+                            <option value="{{ d[0] }}" {% if user.degree == d[0] %}selected{% endif %}>{{ d[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Coding Skill</label>
+                        <select class="form-select" name="coding_skill">
+                            <option value="">Select level</option>
+                            {% for c in [('none','No coding'), ('beginner','Beginner'), ('intermediate','Intermediate'), ('advanced','Advanced')] %}
+                            <option value="{{ c[0] }}" {% if user.coding_skill == c[0] %}selected{% endif %}>{{ c[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:0.9rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Work Style</label>
+                            <select class="form-select" name="preferred_work">
+                                <option value="">Select</option>
+                                {% for w in [('technical','Technical'), ('analytical','Analytical'), ('creative','Creative'), ('people','People'), ('research','Research')] %}
+                                <option value="{{ w[0] }}" {% if user.preferred_work == w[0] %}selected{% endif %}>{{ w[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Goal</label>
+                            <select class="form-select" name="goal">
+                                <option value="">Select</option>
+                                {% for g in [('high_salary','High Salary'), ('job_security','Job Security'), ('passion','Passion'), ('research','Research')] %}
+                                <option value="{{ g[0] }}" {% if user.goal == g[0] %}selected{% endif %}>{{ g[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="interests-label">Interests</span>
+                        <div class="interests-grid">
+                            {% set interest_list = ['AI', 'Data', 'Coding', 'Design', 'Business', 'Finance', 'Marketing', 'Healthcare', 'Law', 'Security'] %}
+                            {% for interest in interest_list %}
+                            <label class="chip-label">
+                                <input type="checkbox" name="interests" value="{{ interest }}"
+                                    {% if interest in (user.interests or '').split(',') %}checked{% endif %}>
+                                <span class="chip-inner">{{ interest }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="marks-row">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">10th %</label>
+                            <input class="form-input" name="tenth" type="number" step="0.1" placeholder="85" value="{{ user.tenth_pct or '' }}">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">12th %</label>
+                            <input class="form-input" name="twelfth" type="number" step="0.1" placeholder="80" value="{{ user.twelfth_pct or '' }}">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">Grad %</label>
+                            <input class="form-input" name="grad" type="number" step="0.1" placeholder="75" value="{{ user.grad_pct or '' }}">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-update">
+                        <span>↻</span> Recalibrate AI
+                    </button>
+                </form>
+            </div>
+
+            <div class="user-meta">
+                <div class="user-avatar">{{ (user.name or user.email)[0].upper() }}</div>
+                <div>
+                    <div style="font-size:0.78rem; color:var(--fg-2); font-weight:600; line-height:1.3;">{{ user.name or 'User' }}</div>
+                    <div style="font-size:0.72rem; color:var(--fg-muted);">{{ user.email }}</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ===== RESULTS SECTION ===== -->
+    <section class="results-section">
+
+        <!-- Page header -->
+        <div class="results-header">
+            <div>
+                <div class="results-eyebrow">◈ AI Analysis Complete</div>
+                <h1 class="results-title">Top Career<br>Matches</h1>
+                <p class="results-sub">Ranked by your stream, interests &amp; academics</p>
+            </div>
+            {% if top10 %}
+            <div class="results-stat-block">
+                <div class="stat-item">
+                    <div class="stat-num">{{ top10[0].score }}%</div>
+                    <div class="stat-label">Top Match</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-num">3</div>
+                    <div class="stat-label">Curated</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- TOP 3 CARDS -->
+        {% if top10 %}
+        <div class="top3-grid">
+            {% for idx in range([top10|length, 3]|min) %}
+            {% set r = top10[idx] %}
+
+            <div class="career-hero-card rank-{{ idx + 1 }}"
+                 onclick="openModal('{{ r.career | replace("'", "\\'") }}',
+                                    {{ r.score }},
+                                    '{{ r.explanation | replace("'", "\\'") | replace('"', "&quot;") }}',
+                                    '{{ r.roadmap|join("||") | replace("'", "\\'") }}',
+                                    '{{ r.skills_gap | replace("'", "\\'") }}',
+                                    '{{ r.salary | replace("'", "\\'") }}')">
+
+                <div class="card-glow"></div>
+
+                <!-- Rank label -->
+                <div class="rank-tag">
+                    {% if idx == 0 %}★ Best Match
+                    {% elif idx == 1 %}◆ Strong Match
+                    {% else %}● Good Match{% endif %}
+                </div>
+
+                <!-- Score badge — simple, no SVG -->
+                <div class="score-badge rank{{ idx+1 }}-badge">
+                    {{ r.score }}<span style="font-size:1rem; opacity:0.75;">%</span>
+                </div>
+
+                <!-- Career name -->
+                <h2 class="hero-career-name">{{ r.career }}</h2>
+
+                <!-- Why this fits -->
+                <p class="hero-explanation">
+                    {{ r.explanation[:110] }}{% if r.explanation|length > 110 %}…{% endif %}
+                </p>
+
+                <!-- Salary -->
+                <div class="hero-salary">
+                    <span class="salary-pill">₹</span>
+                    {{ r.salary.split('|')[0].strip() if '|' in r.salary else r.salary }}
+                </div>
+
+                <!-- CTA -->
+                <div class="hero-cta">
+                    View Full Roadmap
+                    <span class="cta-arrow">→</span>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- COMPARISON BARS -->
+        <div class="comparison-block">
+            <div class="section-heading" style="margin-bottom:1.25rem;">Match Comparison</div>
+            <div class="comparison-bars">
+                {% for idx in range([top10|length, 3]|min) %}
+                {% set r = top10[idx] %}
+                <div class="comp-row"
+                     onclick="openModal('{{ r.career | replace("'", "\\'") }}',
+                                        {{ r.score }},
+                                        '{{ r.explanation | replace("'", "\\'") | replace('"', "&quot;") }}',
+                                        '{{ r.roadmap|join("||") | replace("'", "\\'") }}',
+                                        '{{ r.skills_gap | replace("'", "\\'") }}',
+                                        '{{ r.salary | replace("'", "\\'") }}')">
+                    <div class="comp-name">{{ r.career }}</div>
+                    <div class="comp-bar-wrap">
+                        <div class="comp-bar rank{{ idx+1 }}-bar" style="width:{{ r.score }}%"></div>
+                    </div>
+                    <div class="comp-score">{{ r.score }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty state -->
+        <div style="text-align:center; padding:4rem 2rem; color:var(--fg-muted);">
+            <div style="font-size:3rem; margin-bottom:1rem;">◈</div>
+            <h3 style="font-family:'Space Grotesk',sans-serif; margin-bottom:0.5rem;">Fill your profile to get matches</h3>
+            <p style="font-size:0.9rem;">Complete the form on the left and click Recalibrate AI</p>
+        </div>
+        {% endif %}
+
+    </section>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+    <div class="modal-box">
+        <div class="modal-head">
+            <div>
+                <div class="modal-eyebrow">◈ Career Intelligence Report</div>
+                <div id="modalTitle" class="modal-title"></div>
+                <div id="modalScore" class="modal-score-badge"></div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-section">
+                <div class="modal-section-title">Why This Fits You</div>
+                <p id="modalExplanation" class="modal-explanation"></p>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">6-Month Roadmap</div>
+                <ul id="modalRoadmap" class="roadmap-list"></ul>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">Priority Skills to Build</div>
+                <div id="modalSkills" class="modal-tags"></div>
+            </div>
+
+            <div class="modal-section" style="margin-bottom:0;">
+                <div class="modal-section-title">Expected Salary — India</div>
+                <div id="modalSalary" class="salary-display"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Extra styles specific to this page -->
+<style>
+/* ── Score badge (replaces the broken SVG ring) ── */
+.score-badge {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem; font-weight: 700;
+    color: #fff;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+    flex-shrink: 0;
+}
+
+.rank1-badge {
+    background: rgba(0,212,255,0.15);
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 20px rgba(0,212,255,0.35), inset 0 0 20px rgba(0,212,255,0.08);
+}
+.rank2-badge {
+    background: rgba(168,85,247,0.12);
+    border: 2px solid var(--violet);
+    box-shadow: 0 0 18px rgba(168,85,247,0.3), inset 0 0 18px rgba(168,85,247,0.06);
+}
+.rank3-badge {
+    background: rgba(99,102,241,0.12);
+    border: 2px solid #6366f1;
+    box-shadow: 0 0 15px rgba(99,102,241,0.25), inset 0 0 15px rgba(99,102,241,0.05);
+}
+
+/* ── Light mode overrides for hero cards ── */
+[data-theme="light"] .rank-1 {
+    background: linear-gradient(155deg, #0448c8 0%, #2510c8 100%);
+}
+[data-theme="light"] .rank-2 {
+    background: linear-gradient(155deg, #5010c8 0%, #7020d8 100%);
+}
+[data-theme="light"] .rank-3 {
+    background: linear-gradient(155deg, #2030c8 0%, #3840d8 100%);
+}
+[data-theme="light"] .rank1-badge {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.7);
+    box-shadow: none;
+    color: #fff;
+}
+[data-theme="light"] .rank2-badge,
+[data-theme="light"] .rank3-badge {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.6);
+    box-shadow: none;
+    color: #fff;
+}
+[data-theme="light"] .hero-career-name,
+[data-theme="light"] .hero-explanation,
+[data-theme="light"] .hero-salary,
+[data-theme="light"] .rank-tag,
+[data-theme="light"] .hero-cta { color: #fff !important; }
+[data-theme="light"] .hero-cta {
+    background: rgba(255,255,255,0.15) !important;
+    border-color: rgba(255,255,255,0.25) !important;
+}
+
+/* ── Comparison bars light mode ── */
+[data-theme="light"] .comp-score { color: var(--cyan); }
+</style>
+
+<script>
+function openModal(career, score, explanation, roadmapRaw, skills, salary) {
+    document.getElementById('modalTitle').textContent = career;
+    document.getElementById('modalScore').textContent = score + '% Match';
+    document.getElementById('modalExplanation').textContent = explanation;
+
+    const steps = roadmapRaw.split('||').filter(Boolean);
+    document.getElementById('modalRoadmap').innerHTML = steps.map((s, i) =>
+        `<li><span class="roadmap-step-num">${i + 1}</span>${s}</li>`
+    ).join('');
+
+    const tags = skills.split(/[.,•]+/).map(t => t.trim()).filter(t => t.length > 3);
+    document.getElementById('modalSkills').innerHTML =
+        tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+    document.getElementById('modalSalary').textContent = salary;
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function closeModalOnBg(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+</script>
+
+{% endblock %}

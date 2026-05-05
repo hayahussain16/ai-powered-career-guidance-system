@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-wrap">
+        <div class="auth-accent-bar"></div>
+        <span class="auth-eyebrow">◈ AI-Powered Career Intelligence</span>
+        <h1 class="auth-title">Welcome<br>Back</h1>
+        <p class="auth-subtitle">Sign in to access your personalised career roadmap</p>
+
+        <div class="auth-card">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input class="form-input" id="email" name="email" type="email"
+                       placeholder="you@example.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="pw-field">
+                    <input class="form-input" id="password" name="password"
+                           type="password" placeholder="••••••••">
+                    <button type="button" class="pw-toggle">○</button>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+        </div>
+
+        <p class="auth-footer">
+            No account? <a href="{{ url_for('register') }}">Create one free</a>
+        </p>
+    </div>
+</div>
+
+<script>
+function doLogin() {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{{ url_for("login") }}';
+    ['email','password'].forEach(id => {
+        const h = document.createElement('input');
+        h.type = 'hidden'; h.name = id;
+        h.value = document.getElementById(id).value;
+        form.appendChild(h);
+    });
+    document.body.appendChild(form);
+    form.submit();
+}
+document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+{% endblock %}
